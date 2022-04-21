@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Le modèle : le coeur de l'application.
  *
@@ -163,4 +165,52 @@ class Cellule {
         return etat;
     }
 }
-/** Fin de la classe Cellule, et du modèle en général. */
+
+/**
+ * Définition de la classe zones pour les zones du jeu
+ */
+
+class Tuile {
+    /**
+     * L'Etat est défini par un entier
+     * 1 = normale
+     * 0 = inondee
+     * -1 = submergee
+     */
+    private CModele modele;
+    private int etat;
+    private final int x, y;
+
+    // Constructeur
+    public Tuile(CModele modele, int x, int y) {
+        this.x = x; this.y = y;
+        this.modele = modele;
+        // Etat de base = 0
+        this.etat = 0;
+    }
+
+    public Tuile(CModele modele, int x, int y, int etat) {
+        this.x = x; this.y = y;
+        this.modele = modele;
+        this.etat = etat;
+    }
+
+    public int getEtat() { return etat; }
+
+    public void changeEtat(int etat) { this.etat = etat; }
+
+    public boolean isNormale() { return this.etat == 1; }
+
+    public boolean isInondee() { return this.etat == 0; }
+
+    public boolean isSubmergee() { return this.etat == -1; }
+}
+
+class Joueur {
+
+}
+
+class Tresor {
+
+}
+
