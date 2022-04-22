@@ -26,7 +26,7 @@ class CVue {
     public CVue(CModele modele) {
         /** Définition de la fenêtre principale. */
         frame = new JFrame();
-        frame.setTitle("Jeu de la vie de Conway");
+        frame.setTitle("L'Île interdite.");
         /**
          * On précise un mode pour disposer les différents éléments à
          * l'intérieur de la fenêtre. Quelques possibilités sont :
@@ -85,7 +85,7 @@ class VueGrille extends JPanel implements Observer {
     /** On maintient une référence vers le modèle. */
     private CModele modele;
     /** Définition d'une taille (en pixels) pour l'affichage des cellules. */
-    private final static int TAILLE = 12;
+    private final static int TAILLE = 96;
 
     /** Constructeur. */
     public VueGrille(CModele modele) {
@@ -149,6 +149,14 @@ class VueGrille extends JPanel implements Observer {
         /** Coloration d'un rectangle. */
         g.fillRect(x, y, TAILLE, TAILLE);
     }
+
+    /**
+     * Fonction pour dessiner une tuile
+     */
+
+    private void paint(Graphics g, Tuile t, int x, int y) {
+
+    }
 }
 
 
@@ -174,6 +182,11 @@ class VueCommandes extends JPanel {
          * Puis on ajoute ce bouton au panneau [this].
          */
         JButton boutonAvance = new JButton(">");
+
+        /**
+         * Nouveaux boutons pour le joueur
+         */
+
         this.add(boutonAvance);
         /**
          * Le bouton, lorsqu'il est cliqué par l'utilisateur, produit un

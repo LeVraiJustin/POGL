@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 class CModele extends Observable {
     /** On fixe la taille de la grille. */
-    public static final int HAUTEUR=40, LARGEUR=60;
+    public static final int HAUTEUR=6, LARGEUR=6;
     /** On stocke un tableau de cellules. */
     private Cellule[][] cellules;
 
@@ -166,6 +166,7 @@ class Cellule {
     }
 }
 
+
 /**
  * Définition de la classe zones pour les zones du jeu
  */
@@ -178,24 +179,22 @@ class Tuile {
      * -1 = submergee
      */
     private CModele modele;
+    private boolean heliport;
     private int etat;
     private final int x, y;
+    Artefact artefact;
 
-    // Constructeur
-    public Tuile(CModele modele, int x, int y) {
-        this.x = x; this.y = y;
-        this.modele = modele;
-        // Etat de base = 0
-        this.etat = 0;
-    }
-
-    public Tuile(CModele modele, int x, int y, int etat) {
+    public Tuile(CModele modele, int x, int y, int etat, boolean heliport, Artefact artefact) {
         this.x = x; this.y = y;
         this.modele = modele;
         this.etat = etat;
+        this.heliport = heliport;
+        this.artefact = artefact;
     }
 
-    public int getEtat() { return etat; }
+    public int getEtat() { return this.etat; }
+
+    public Artefact getArtefact() { return this.artefact; }
 
     public void changeEtat(int etat) { this.etat = etat; }
 
@@ -204,14 +203,18 @@ class Tuile {
     public boolean isInondee() { return this.etat == 0; }
 
     public boolean isSubmergee() { return this.etat == -1; }
+
+    public boolean isHeliport() { return this.heliport; }
 }
 
-class Joueur {
+class Aventurier {
+
     Tuile position;
+    Artefact cle;
 
 }
 
-class Tresor {
+class Carte {
 
 }
 
