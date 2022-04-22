@@ -207,6 +207,7 @@ class Tuile {
 }
 
 class Joueur {
+    Tuile position;
 
 }
 
