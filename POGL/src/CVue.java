@@ -144,7 +144,9 @@ class VueGrille extends JPanel implements Observer {
         } else if (t.isSubmergee()) {
             g.setColor(Color.BLUE.darker());
         } else if (t.isInondee()) {
-            g.setColor(Color.BLUE.brighter().brighter());
+            g.setColor(Color.CYAN);
+        } else if (t.isHeliport()) {
+            g.setColor(Color.DARK_GRAY);
         } else {
             g.setColor(Color.WHITE);
         }
@@ -222,6 +224,11 @@ class VueCommandes extends JPanel {
         JButton gauche = new JButton("Gauche");
         JButton descend = new JButton("Descendre");
         JButton passe = new JButton("Passez au tour suivant");
+        JButton assecheS = new JButton("Assèche sur place");
+        JButton assecheH = new JButton("Assèche en haut");
+        JButton assecheB = new JButton("Assèche en bas");
+        JButton assecheD = new JButton("Assèche à droite");
+        JButton assecheG = new JButton("Assèche à gauche");
 
         monte.addActionListener(e -> { modele.aventurierMonte(); });
         droite.addActionListener(e -> { modele.aventurierDroite(); });
@@ -229,10 +236,21 @@ class VueCommandes extends JPanel {
         descend.addActionListener(e -> { modele.aventurierDescend(); });
         passe.addActionListener(e -> { modele.passeTour();} );
 
+        assecheS.addActionListener(e -> { modele.assecheTuileS(); });
+        assecheH.addActionListener(e -> { modele.assecheTuileH(); });
+        assecheB.addActionListener(e -> { modele.assecheTuileB(); });
+        assecheD.addActionListener(e -> { modele.assecheTuileD(); });
+        assecheG.addActionListener(e -> { modele.assecheTuileG(); });
+
         this.add(droite);
         this.add(gauche);
         this.add(descend);
         this.add(passe);
+        this.add(assecheS);
+        this.add(assecheH);
+        this.add(assecheB);
+        this.add(assecheD);
+        this.add(assecheG);
     }
 }
 /** Fin de la vue. */

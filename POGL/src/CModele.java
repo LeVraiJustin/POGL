@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Le modèle : le coeur de l'application.
@@ -68,10 +69,19 @@ class CModele extends Observable {
         // On place le joueur
         jeu[3][3].setAventurier();
 
-        // On place les 5 zones inondés de manière aléatoire
+        // On place les 6 zones inondés de manière aléatoire
+        Random rand = new Random();
+
+        jeu[(rand.nextInt(4-3))+3][1].decreaseEtat();
+        jeu[(rand.nextInt(5-2))+2][2].decreaseEtat();
+        jeu[(rand.nextInt(6-1))+1][3].decreaseEtat();
+        jeu[(rand.nextInt(6-1))+1][4].decreaseEtat();
+        jeu[(rand.nextInt(5-2))+2][5].decreaseEtat();
+        jeu[(rand.nextInt(4-3))+3][6].decreaseEtat();
 
         // On place l'héliport de manière aléatoire
 
+        jeu[(rand.nextInt(5-2))+2][(rand.nextInt(5-2))+2].setHeliport();
     }
 
     /**
@@ -158,8 +168,44 @@ class CModele extends Observable {
         this.aventurier.resetNumberAction();
     }
 
-    public void inondeTuile() {
+    public void assecheTuileS() {
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX][posY].getEtat() == 0 && (!jeu[posX][posY].isMer())) {
+            jeu[posX][posY].increaseEtat();
+        }
+    }
 
+    public void assecheTuileH() {
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX][posY-1].getEtat() == 0 && (!jeu[posX][posY-1].isMer())) {
+            jeu[posX][posY-1].increaseEtat();
+        }
+    }
+
+    public void assecheTuileB() {
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX][posY+1].getEtat() == 0 && (!jeu[posX][posY-1].isMer())) {
+            jeu[posX][posY+1].increaseEtat();
+        }
+    }
+
+    public void assecheTuileD() {
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX+1][posY].getEtat() == 0 && (!jeu[posX][posY-1].isMer())) {
+            jeu[posX+1][posY].increaseEtat();
+        }
+    }
+
+    public void assecheTuileG() {
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX-1][posY].getEtat() == 0 && (!jeu[posX][posY-1].isMer())) {
+            jeu[posX-1][posY].increaseEtat();
+        }
     }
 }
 
@@ -206,7 +252,9 @@ class Tuile {
 
     public Artefact getArtefact() { return this.artefact; }
 
-    public void changeEtat(int etat) { this.etat = etat; }
+    public void decreaseEtat() { this.etat--; }
+
+    public  void increaseEtat() { this.etat++; }
 
     public boolean isNormale() { return this.etat == 1; }
 
@@ -215,6 +263,8 @@ class Tuile {
     public boolean isSubmergee() { return this.etat == -1; }
 
     public boolean isHeliport() { return this.heliport; }
+
+    public void setHeliport() { this.heliport = true; }
 
     public boolean isMer() { return this.mer; }
 
