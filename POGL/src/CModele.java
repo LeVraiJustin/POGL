@@ -67,6 +67,11 @@ class CModele extends Observable {
         // On init les tuiles avec les artefacts
         // On place le joueur
         jeu[3][3].setAventurier();
+
+        // On place les 5 zones inondés de manière aléatoire
+
+        // On place l'héliport de manière aléatoire
+
     }
 
     /**
@@ -81,7 +86,7 @@ class CModele extends Observable {
          */
         int posX = this.aventurier.getPositionX();
         int posY = this.aventurier.getPositionY();
-        if (jeu[posX][posY-1].isValide() && this.aventurier.getNumberAction() > 1) {
+        if (jeu[posX][posY-1].isValide() && this.aventurier.getNumberAction() >= 1) {
             this.aventurier.decreaseNumberAction();
             this.aventurier.deplaceAventurier(posX, posY-1);
             jeu[posX][posY].supprimeAventurier();
@@ -98,7 +103,7 @@ class CModele extends Observable {
     public void aventurierDescend() {
         int posX = this.aventurier.getPositionX();
         int posY = this.aventurier.getPositionY();
-        if (jeu[posX][posY+1].isValide() && this.aventurier.getNumberAction() > 1) {
+        if (jeu[posX][posY+1].isValide() && this.aventurier.getNumberAction() >= 1) {
             this.aventurier.decreaseNumberAction();
             this.aventurier.deplaceAventurier(posX, posY+1);
             jeu[posX][posY].supprimeAventurier();
@@ -111,7 +116,7 @@ class CModele extends Observable {
     public void aventurierDroite() {
         int posX = this.aventurier.getPositionX();
         int posY = this.aventurier.getPositionY();
-        if (jeu[posX+1][posY].isValide() && this.aventurier.getNumberAction() > 1) {
+        if (jeu[posX+1][posY].isValide() && this.aventurier.getNumberAction() >= 1) {
             this.aventurier.decreaseNumberAction();
             this.aventurier.deplaceAventurier(posX+1, posY);
             jeu[posX][posY].supprimeAventurier();
@@ -124,7 +129,7 @@ class CModele extends Observable {
     public void aventurierGauche() {
         int posX = this.aventurier.getPositionX();
         int posY = this.aventurier.getPositionY();
-        if (jeu[posX-1][posY].isValide() && this.aventurier.getNumberAction() > 1) {
+        if (jeu[posX-1][posY].isValide() && this.aventurier.getNumberAction() >= 1) {
             this.aventurier.decreaseNumberAction();
             this.aventurier.deplaceAventurier(posX-1, posY);
             jeu[posX][posY].supprimeAventurier();
@@ -148,6 +153,14 @@ class CModele extends Observable {
      * la seule à pouvoir être utilisée depuis l'extérieur de [CModele].
      * Dans [CModele], les deux fonctionnent.
      */
+
+    public void passeTour() {
+        this.aventurier.resetNumberAction();
+    }
+
+    public void inondeTuile() {
+
+    }
 }
 
 /** Fin de la classe CModele. */
@@ -253,6 +266,8 @@ class Aventurier {
             this.numberAction--;
         }
     }
+
+    public void resetNumberAction() { this.numberAction = 3; }
 
     public void deplaceAventurier(int positionX, int positionY) {
         this.positionX = positionX;

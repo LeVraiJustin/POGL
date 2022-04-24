@@ -141,6 +141,10 @@ class VueGrille extends JPanel implements Observer {
             g.setColor(Color.BLUE.darker());
         } else if (t.isAventurier()) {
             g.setColor(Color.GREEN);
+        } else if (t.isSubmergee()) {
+            g.setColor(Color.BLUE.darker());
+        } else if (t.isInondee()) {
+            g.setColor(Color.BLUE.brighter().brighter());
         } else {
             g.setColor(Color.WHITE);
         }
@@ -219,17 +223,11 @@ class VueCommandes extends JPanel {
         JButton descend = new JButton("Descendre");
         JButton passe = new JButton("Passez au tour suivant");
 
-        // Position des boutons
-        monte.setBounds(20, 200, 40, 40);
-        droite.setBounds(200, 20, 40, 40);
-        gauche.setBounds(-200, 20, 40, 40);
-        descend.setBounds(20, -200, 40, 40);
-
-
         monte.addActionListener(e -> { modele.aventurierMonte(); });
         droite.addActionListener(e -> { modele.aventurierDroite(); });
         gauche.addActionListener(e -> { modele.aventurierGauche(); });
         descend.addActionListener(e -> { modele.aventurierDescend(); });
+        passe.addActionListener(e -> { modele.passeTour();} );
 
         this.add(droite);
         this.add(gauche);
