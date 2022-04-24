@@ -285,6 +285,6 @@ class Aventurier {
 }
 
 class Carte {
-    int posX, posY;
+
 }
 
