@@ -20,21 +20,25 @@ class Controleur implements ActionListener {
      */
     CModele modele;
     public Controleur(CModele modele) { this.modele = modele; }
-    /**
-     * Action effectuée à réception d'un événement : appeler la
-     * méthode [avance] du modèle.
-     */
-    public void actionPerformed(ActionEvent e) {
-        modele.avance();
-    }
 
     /**
      * Controle des déplacements du joueur
      */
 
-    public void up(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getActionCommand()) {
+            case "Monte":
+                modele.aventurierMonte();
 
-    }
+        }
+        modele.aventurierMonte(); }
 
+    public void aventurierMonte(ActionEvent e) { modele.aventurierMonte(); }
+
+    public void aventurierDescend(ActionEvent e) { modele.aventurierDescend(); }
+
+    public void aventurierDroite(ActionEvent e) { modele.aveturierDroite(); }
+
+    public void aventurierGauche(ActionEvent e) { modele.aventurierGauche(); }
 }
 /** Fin du contrôleur. */

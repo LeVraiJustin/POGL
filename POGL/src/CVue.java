@@ -128,34 +128,21 @@ class VueGrille extends JPanel implements Observer {
                  * On lui fournit les informations de dessin [g] et les
                  * coordonnées du coin en haut à gauche.
                  */
-                paint(g, modele.getCellule(i, j), (i-1)*TAILLE, (j-1)*TAILLE);
+                paint(g, modele.getTuile(i, j), (i-1)*TAILLE, (j-1)*TAILLE);
             }
         }
     }
     /**
-     * Fonction auxiliaire de dessin d'une cellule.
-     * Ici, la classe [Cellule] ne peut être désignée que par l'intermédiaire
-     * de la classe [CModele] à laquelle elle est interne, d'où le type
-     * [CModele.Cellule].
-     * Ceci serait impossible si [Cellule] était déclarée privée dans [CModele].
-     */
-    private void paint(Graphics g, Cellule c, int x, int y) {
-        /** Sélection d'une couleur. */
-        if (c.estVivante()) {
-            g.setColor(Color.BLACK);
-        } else {
-            g.setColor(Color.WHITE);
-        }
-        /** Coloration d'un rectangle. */
-        g.fillRect(x, y, TAILLE, TAILLE);
-    }
-
-    /**
-     * Fonction pour dessiner une tuile
+     * Fonction pour dessiner, colorer une tuile
      */
 
     private void paint(Graphics g, Tuile t, int x, int y) {
-
+        if (t.isMer()) {
+            g.setColor(Color.BLUE.darker());
+        } else {
+            g.setColor(Color.WHITE);
+        }
+        g.fillRoundRect(x, y, TAILLE, TAILLE, 36, 36);
     }
 }
 
@@ -181,8 +168,8 @@ class VueCommandes extends JPanel {
          * texte qui doit l'étiqueter.
          * Puis on ajoute ce bouton au panneau [this].
          */
-        JButton boutonAvance = new JButton(">");
-
+        JButton boutonAvance = new JButton("Monte");
+        boutonAvance.setActionCommand("Monte");
         /**
          * Nouveaux boutons pour le joueur
          */
@@ -223,6 +210,13 @@ class VueCommandes extends JPanel {
          boutonAvance.addActionListener(e -> { modele.avance(); });
          *
          */
+        JButton droite = new JButton("Droite");
+        JButton gauche = new JButton("Gauche");
+        JButton descend = new JButton("Descendre");
+
+        this.add(droite);
+        this.add(gauche);
+        this.add(descend);
 
     }
 }

@@ -12,7 +12,8 @@ class CModele extends Observable {
     /** On fixe la taille de la grille. */
     public static final int HAUTEUR=6, LARGEUR=6;
     /** On stocke un tableau de cellules. */
-    private Cellule[][] cellules;
+    private Tuile[][] jeu;
+    private Aventurier aventurier;
 
     /** Construction : on initialise un tableau de cellules. */
     public CModele() {
@@ -20,10 +21,10 @@ class CModele extends Observable {
          * Pour éviter les problèmes aux bords, on ajoute une ligne et une
          * colonne de chaque côté, dont les cellules n'évolueront pas.
          */
-        cellules = new Cellule[LARGEUR+2][HAUTEUR+2];
+        jeu = new Tuile[LARGEUR+2][HAUTEUR+2];
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
-                cellules[i][j] = new Cellule(this,i, j);
+                jeu[i][j] = new Tuile(this, i, j, 1, false, Artefact.NONE);
             }
         }
         init();
@@ -34,35 +35,45 @@ class CModele extends Observable {
      * ont été ajoutés.
      */
     public void init() {
-        for(int i=1; i<=LARGEUR; i++) {
-            for(int j=1; j<=HAUTEUR; j++) {
-                if (Math.random() < .2) {
-                    cellules[i][j].etat = true;
-                }
-            }
+        // On init les tuiles mer
+        jeu[1][1].setMer();
+        jeu[1][2].setMer();
+        jeu[2][1].setMer();
+
+        jeu[1][5].setMer();
+        jeu[1][6].setMer();
+        jeu[2][6].setMer();
+
+        jeu[5][6].setMer();
+        jeu[6][6].setMer();
+        jeu[6][5].setMer();
+
+        jeu[5][1].setMer();
+        jeu[6][1].setMer();
+        jeu[6][2].setMer();
+        // + Les tuiles invisbles
+        for (int i = 0; i < 1; i++) {
+            jeu[i][0].setMer();
+            jeu[0][i].setMer();
+            jeu[LARGEUR+1][i].setMer();
+            jeu[i][LARGEUR+1].setMer();
         }
+
+        // On init les tuiles avec les artefacts
+
     }
 
     /**
-     * Calcul de la génération suivante.
+     * Mouvement avance du joueur
      */
-    public void avance() {
+    public void aventurierMonte() {
         /**
          * On procède en deux étapes.
          *  - D'abord, pour chaque cellule on évalue ce que sera son état à la
          *    prochaine génération.
          *  - Ensuite, on applique les évolutions qui ont été calculées.
          */
-        for(int i=1; i<LARGEUR+1; i++) {
-            for(int j=1; j<HAUTEUR+1; j++) {
-                cellules[i][j].evalue();
-            }
-        }
-        for(int i=1; i<LARGEUR+1; i++) {
-            for(int j=1; j<HAUTEUR+1; j++) {
-                cellules[i][j].evolue();
-            }
-        }
+
         /**
          * Pour finir, le modèle ayant changé, on signale aux observateurs
          * qu'ils doivent se mettre à jour.
@@ -70,43 +81,24 @@ class CModele extends Observable {
         notifyObservers();
     }
 
-    /**
-     * Méthode auxiliaire : compte le nombre de voisines vivantes d'une
-     * cellule désignée par ses coordonnées.
-     */
-    protected int compteVoisines(int x, int y) {
-        int res=0;
-        /**
-         * Stratégie simple à écrire : on compte les cellules vivantes dans le
-         * carré 3x3 centré autour des coordonnées (x, y), puis on retire 1
-         * si la cellule centrale est elle-même vivante.
-         * On n'a pas besoin de traiter à part les bords du tableau de cellules
-         * grâce aux lignes et colonnes supplémentaires qui ont été ajoutées
-         * de chaque côté (dont les cellules sont mortes et n'évolueront pas).
-         */
-        for(int i=x-1; i<=x+1; i++) {
-            for(int j=y-1; j<=y+1; j++) {
-                if (cellules[i][j].etat) { res++; }
-            }
-        }
-        return (res - ((cellules[x][y].etat)?1:0));
-        /**
-         * L'expression [(c)?e1:e2] prend la valeur de [e1] si [c] vaut [true]
-         * et celle de [e2] si [c] vaut [false].
-         * Cette dernière ligne est donc équivalente à
-         *     int v;
-         *     if (cellules[x][y].etat) { v = res - 1; }
-         *     else { v = res - 0; }
-         *     return v;
-         */
+    public void aventurierDescend() {
+
+    }
+
+    public void aveturierDroite() {
+
+    }
+
+    public void aventurierGauche() {
+
     }
 
     /**
      * Une méthode pour renvoyer la cellule aux coordonnées choisies (sera
      * utilisée par la vue).
      */
-    public Cellule getCellule(int x, int y) {
-        return cellules[x][y];
+    public Tuile getTuile(int x, int y) {
+        return jeu[x][y];
     }
     /**
      * Notez qu'à l'intérieur de la classe [CModele], la classe interne est
@@ -118,54 +110,6 @@ class CModele extends Observable {
 }
 
 /** Fin de la classe CModele. */
-
-/**
- * Définition d'une classe pour les cellules.
- * Cette classe fait encore partie du modèle.
- */
-class Cellule {
-    /** On conserve un pointeur vers la classe principale du modèle. */
-    private CModele modele;
-
-    /** L'état d'une cellule est donné par un booléen. */
-    protected boolean etat;
-    /**
-     * On stocke les coordonnées pour pouvoir les passer au modèle lors
-     * de l'appel à [compteVoisines].
-     */
-    private final int x, y;
-    public Cellule(CModele modele, int x, int y) {
-        this.modele = modele;
-        this.etat = false;
-        this.x = x; this.y = y;
-    }
-    /**
-     * Le passage à la génération suivante se fait en deux étapes :
-     *  - D'abord on calcule pour chaque cellule ce que sera sont état à la
-     *    génération suivante (méthode [evalue]). On stocke le résultat
-     *    dans un attribut supplémentaire [prochainEtat].
-     *  - Ensuite on met à jour l'ensemble des cellules (méthode [evolue]).
-     * Objectif : éviter qu'une évolution immédiate d'une cellule pollue
-     * la décision prise pour une cellule voisine.
-     */
-    private boolean prochainEtat;
-    protected void evalue() {
-        switch (this.modele.compteVoisines(x, y)) {
-            case 2: prochainEtat=etat; break;
-            case 3: prochainEtat=true; break;
-            default: prochainEtat=false;
-        }
-    }
-    protected void evolue() {
-        etat = prochainEtat;
-    }
-
-    /** Un test à l'usage des autres classes (sera utilisé par la vue). */
-    public boolean estVivante() {
-        return etat;
-    }
-}
-
 
 /**
  * Définition de la classe zones pour les zones du jeu
@@ -182,7 +126,10 @@ class Tuile {
     private boolean heliport;
     private int etat;
     private final int x, y;
-    Artefact artefact;
+    private Artefact artefact;
+    // Si c'est dans la mer
+    // On ne peut pas accéder à cette tuile;
+    private boolean mer;
 
     public Tuile(CModele modele, int x, int y, int etat, boolean heliport, Artefact artefact) {
         this.x = x; this.y = y;
@@ -190,6 +137,7 @@ class Tuile {
         this.etat = etat;
         this.heliport = heliport;
         this.artefact = artefact;
+        this.mer = false;
     }
 
     public int getEtat() { return this.etat; }
@@ -205,12 +153,59 @@ class Tuile {
     public boolean isSubmergee() { return this.etat == -1; }
 
     public boolean isHeliport() { return this.heliport; }
+
+    public boolean isMer() { return this.mer; }
+
+    public void setMer() { this.mer = true; }
+
+    // Permet de savoir si une tuile est valide
+    public boolean isValide() {
+        if ((this.etat != -1) && (this.mer == false)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 class Aventurier {
 
-    Tuile position;
-    Artefact cle;
+    private Tuile position;
+    private Artefact cle;
+    private boolean artefact;
+    private int numberAction;
+
+    public Aventurier(Tuile position, Artefact cle, int numberAction) {
+        this.cle = cle;
+        this.numberAction = numberAction;
+        this.position = position;
+    }
+
+    public void ajouteCle(Artefact cle) {
+        this.cle = cle;
+    }
+
+    public int getNumberAction() { return this.numberAction; }
+
+    public void decreaseNumberAction() {
+        if (this.numberAction > 0) {
+            this.numberAction--;
+        }
+    }
+
+    public void deplaceAventurier(Tuile position) {
+        if (position.isValide()) {
+            this.position = position;
+        }
+    }
+
+    public boolean haveArtefact() {
+        return this.artefact;
+    }
+
+    public void setArtefact(boolean artefact) {
+        this.artefact = artefact;
+    }
 
 }
 
