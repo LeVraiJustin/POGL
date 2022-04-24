@@ -13,18 +13,18 @@ class CModele extends Observable {
     public static final int HAUTEUR=6, LARGEUR=6;
     /** On stocke un tableau de cellules. */
     private Tuile[][] jeu;
-    private Aventurier aventurier;
-
+    private Aventurier aventurier = new Aventurier(3, 3, Artefact.NONE, 3);
     /** Construction : on initialise un tableau de cellules. */
     public CModele() {
         /**
          * Pour éviter les problèmes aux bords, on ajoute une ligne et une
          * colonne de chaque côté, dont les cellules n'évolueront pas.
          */
+
         jeu = new Tuile[LARGEUR+2][HAUTEUR+2];
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
-                jeu[i][j] = new Tuile(this, i, j, 1, false, Artefact.NONE);
+                jeu[i][j] = new Tuile(this, i, j, 1, false, Artefact.NONE, false);
             }
         }
         init();
@@ -52,15 +52,21 @@ class CModele extends Observable {
         jeu[6][1].setMer();
         jeu[6][2].setMer();
         // + Les tuiles invisbles
-        for (int i = 0; i < 1; i++) {
-            jeu[i][0].setMer();
-            jeu[0][i].setMer();
-            jeu[LARGEUR+1][i].setMer();
-            jeu[i][LARGEUR+1].setMer();
-        }
+        jeu[0][3].setMer();
+        jeu[0][4].setMer();
+
+        jeu[3][7].setMer();
+        jeu[4][7].setMer();
+
+        jeu[7][3].setMer();
+        jeu[7][4].setMer();
+
+        jeu[4][0].setMer();
+        jeu[3][0].setMer();
 
         // On init les tuiles avec les artefacts
-
+        // On place le joueur
+        jeu[3][3].setAventurier();
     }
 
     /**
@@ -73,7 +79,15 @@ class CModele extends Observable {
          *    prochaine génération.
          *  - Ensuite, on applique les évolutions qui ont été calculées.
          */
-
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX][posY-1].isValide() && this.aventurier.getNumberAction() > 1) {
+            this.aventurier.decreaseNumberAction();
+            this.aventurier.deplaceAventurier(posX, posY-1);
+            jeu[posX][posY].supprimeAventurier();
+            jeu[posX][posY-1].setAventurier();
+        }
+        System.out.println("playerX : " + posX + ", playerY : " + posY);
         /**
          * Pour finir, le modèle ayant changé, on signale aux observateurs
          * qu'ils doivent se mettre à jour.
@@ -82,15 +96,42 @@ class CModele extends Observable {
     }
 
     public void aventurierDescend() {
-
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX][posY+1].isValide() && this.aventurier.getNumberAction() > 1) {
+            this.aventurier.decreaseNumberAction();
+            this.aventurier.deplaceAventurier(posX, posY+1);
+            jeu[posX][posY].supprimeAventurier();
+            jeu[posX][posY+1].setAventurier();
+        }
+        System.out.println("playerX : " + posX + ", playerY : " + posY);
+        notifyObservers();
     }
 
-    public void aveturierDroite() {
-
+    public void aventurierDroite() {
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX+1][posY].isValide() && this.aventurier.getNumberAction() > 1) {
+            this.aventurier.decreaseNumberAction();
+            this.aventurier.deplaceAventurier(posX+1, posY);
+            jeu[posX][posY].supprimeAventurier();
+            jeu[posX+1][posY].setAventurier();
+        }
+        System.out.println("playerX : " + posX + ", playerY : " + posY);
+        notifyObservers();
     }
 
     public void aventurierGauche() {
-
+        int posX = this.aventurier.getPositionX();
+        int posY = this.aventurier.getPositionY();
+        if (jeu[posX-1][posY].isValide() && this.aventurier.getNumberAction() > 1) {
+            this.aventurier.decreaseNumberAction();
+            this.aventurier.deplaceAventurier(posX-1, posY);
+            jeu[posX][posY].supprimeAventurier();
+            jeu[posX-1][posY].setAventurier();
+        }
+        System.out.println("playerX : " + posX + ", playerY : " + posY);
+        notifyObservers();
     }
 
     /**
@@ -130,15 +171,23 @@ class Tuile {
     // Si c'est dans la mer
     // On ne peut pas accéder à cette tuile;
     private boolean mer;
+    private boolean aventurier;
+    Aventurier player;
 
-    public Tuile(CModele modele, int x, int y, int etat, boolean heliport, Artefact artefact) {
+    public Tuile(CModele modele, int x, int y, int etat, boolean heliport, Artefact artefact, boolean aventurier) {
         this.x = x; this.y = y;
         this.modele = modele;
         this.etat = etat;
         this.heliport = heliport;
         this.artefact = artefact;
         this.mer = false;
+        this.aventurier = aventurier;
+        this.player = player;
     }
+
+    public int getX() { return this.x; }
+
+    public int getY() { return this.y; }
 
     public int getEtat() { return this.etat; }
 
@@ -158,28 +207,40 @@ class Tuile {
 
     public void setMer() { this.mer = true; }
 
+    public boolean isAventurier() { return this.aventurier; }
+
+    public void setAventurier() { this.aventurier = true; }
+
+    public void supprimeAventurier() { this.aventurier = false; }
+
     // Permet de savoir si une tuile est valide
     public boolean isValide() {
-        if ((this.etat != -1) && (this.mer == false)) {
-            return true;
-        } else {
+        if ((this.etat == -1) || (this.mer == true) || (this.aventurier == true)) {
             return false;
+        } else {
+            return true;
         }
     }
 }
 
 class Aventurier {
 
-    private Tuile position;
+    private int positionX, positionY;
     private Artefact cle;
     private boolean artefact;
     private int numberAction;
 
-    public Aventurier(Tuile position, Artefact cle, int numberAction) {
+    public Aventurier(int positionX, int positionY, Artefact cle, int numberAction) {
         this.cle = cle;
         this.numberAction = numberAction;
-        this.position = position;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.artefact = false;
     }
+
+    public int getPositionX() { return this.positionX; }
+
+    public int getPositionY() { return this.positionY; }
 
     public void ajouteCle(Artefact cle) {
         this.cle = cle;
@@ -193,10 +254,9 @@ class Aventurier {
         }
     }
 
-    public void deplaceAventurier(Tuile position) {
-        if (position.isValide()) {
-            this.position = position;
-        }
+    public void deplaceAventurier(int positionX, int positionY) {
+        this.positionX = positionX;
+        this.positionY = positionY;
     }
 
     public boolean haveArtefact() {
@@ -210,6 +270,6 @@ class Aventurier {
 }
 
 class Carte {
-
+    int posX, posY;
 }
 

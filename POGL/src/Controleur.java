@@ -26,19 +26,8 @@ class Controleur implements ActionListener {
      */
 
     public void actionPerformed(ActionEvent e) {
-        switch (e.getActionCommand()) {
-            case "Monte":
-                modele.aventurierMonte();
 
-        }
-        modele.aventurierMonte(); }
+    }
 
-    public void aventurierMonte(ActionEvent e) { modele.aventurierMonte(); }
-
-    public void aventurierDescend(ActionEvent e) { modele.aventurierDescend(); }
-
-    public void aventurierDroite(ActionEvent e) { modele.aveturierDroite(); }
-
-    public void aventurierGauche(ActionEvent e) { modele.aventurierGauche(); }
 }
 /** Fin du contrôleur. */

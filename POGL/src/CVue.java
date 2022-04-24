@@ -139,10 +139,12 @@ class VueGrille extends JPanel implements Observer {
     private void paint(Graphics g, Tuile t, int x, int y) {
         if (t.isMer()) {
             g.setColor(Color.BLUE.darker());
+        } else if (t.isAventurier()) {
+            g.setColor(Color.GREEN);
         } else {
             g.setColor(Color.WHITE);
         }
-        g.fillRoundRect(x, y, TAILLE, TAILLE, 36, 36);
+        g.fillRect(x, y, TAILLE, TAILLE);
     }
 }
 
@@ -159,22 +161,24 @@ class VueCommandes extends JPanel {
      * référence au modèle.
      */
     private CModele modele;
+    private int nAction;
 
     /** Constructeur. */
     public VueCommandes(CModele modele) {
         this.modele = modele;
+        this.nAction = 3;
         /**
          * On crée un nouveau bouton, de classe [JButton], en précisant le
          * texte qui doit l'étiqueter.
          * Puis on ajoute ce bouton au panneau [this].
          */
-        JButton boutonAvance = new JButton("Monte");
-        boutonAvance.setActionCommand("Monte");
+        JButton monte = new JButton("Monte");
+        monte.setActionCommand("Monte");
         /**
          * Nouveaux boutons pour le joueur
          */
 
-        this.add(boutonAvance);
+        this.add(monte);
         /**
          * Le bouton, lorsqu'il est cliqué par l'utilisateur, produit un
          * événement, de classe [ActionEvent].
@@ -199,7 +203,7 @@ class VueCommandes extends JPanel {
          */
         Controleur ctrl = new Controleur(modele);
         /** Enregistrement du contrôleur comme auditeur du bouton. */
-        boutonAvance.addActionListener(ctrl);
+        monte.addActionListener(ctrl);
 
         /**
          * Variante : une lambda-expression qui évite de créer une classe
@@ -213,11 +217,24 @@ class VueCommandes extends JPanel {
         JButton droite = new JButton("Droite");
         JButton gauche = new JButton("Gauche");
         JButton descend = new JButton("Descendre");
+        JButton passe = new JButton("Passez au tour suivant");
+
+        // Position des boutons
+        monte.setBounds(20, 200, 40, 40);
+        droite.setBounds(200, 20, 40, 40);
+        gauche.setBounds(-200, 20, 40, 40);
+        descend.setBounds(20, -200, 40, 40);
+
+
+        monte.addActionListener(e -> { modele.aventurierMonte(); });
+        droite.addActionListener(e -> { modele.aventurierDroite(); });
+        gauche.addActionListener(e -> { modele.aventurierGauche(); });
+        descend.addActionListener(e -> { modele.aventurierDescend(); });
 
         this.add(droite);
         this.add(gauche);
         this.add(descend);
-
+        this.add(passe);
     }
 }
 /** Fin de la vue. */
