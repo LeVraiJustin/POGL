@@ -25,7 +25,7 @@ class CModele extends Observable {
         jeu = new Tuile[LARGEUR+2][HAUTEUR+2];
         for(int i=0; i<LARGEUR+2; i++) {
             for(int j=0; j<HAUTEUR+2; j++) {
-                jeu[i][j] = new Tuile(this, i, j, 1, false, Artefact.NONE, false);
+                jeu[i][j] = new Tuile(this, i, j, 1, false, Artefact.NONE, false, false);
             }
         }
         init();
@@ -82,6 +82,10 @@ class CModele extends Observable {
         // On place l'héliport de manière aléatoire
 
         jeu[(rand.nextInt(5-2))+2][(rand.nextInt(5-2))+2].setHeliport();
+
+        // On place l'artefact
+
+        jeu[(rand.nextInt(5-2))+2+1][(rand.nextInt(5-2))+2+1].setArtefact();
     }
 
     /**
@@ -166,6 +170,13 @@ class CModele extends Observable {
 
     public void passeTour() {
         this.aventurier.resetNumberAction();
+        Random rand = new Random();
+        jeu[(rand.nextInt(4-3))+3][1].decreaseEtat();
+        jeu[(rand.nextInt(5-2))+2][2].decreaseEtat();
+        jeu[(rand.nextInt(6-1))+1][3].decreaseEtat();
+        jeu[(rand.nextInt(6-1))+1][4].decreaseEtat();
+        jeu[(rand.nextInt(5-2))+2][5].decreaseEtat();
+        jeu[(rand.nextInt(4-3))+3][6].decreaseEtat();
     }
 
     public void assecheTuileS() {
@@ -207,6 +218,13 @@ class CModele extends Observable {
             jeu[posX-1][posY].increaseEtat();
         }
     }
+
+    public void recupereArtefact() {
+        if (jeu[this.aventurier.getPositionX()][this.aventurier.getPositionY()].isArtefact() && jeu[this.aventurier.getPositionX()][this.aventurier.getPositionY()].isValide()) {
+            jeu[this.aventurier.getPositionX()][this.aventurier.getPositionY()].supprimeArtefact();
+            this.aventurier.recupereArtefact();
+        }
+    }
 }
 
 /** Fin de la classe CModele. */
@@ -227,13 +245,14 @@ class Tuile {
     private int etat;
     private final int x, y;
     private Artefact artefact;
+    private boolean arte;
     // Si c'est dans la mer
     // On ne peut pas accéder à cette tuile;
     private boolean mer;
     private boolean aventurier;
-    Aventurier player;
+    private Aventurier player;
 
-    public Tuile(CModele modele, int x, int y, int etat, boolean heliport, Artefact artefact, boolean aventurier) {
+    public Tuile(CModele modele, int x, int y, int etat, boolean heliport, Artefact artefact, boolean aventurier, boolean arte) {
         this.x = x; this.y = y;
         this.modele = modele;
         this.etat = etat;
@@ -242,6 +261,7 @@ class Tuile {
         this.mer = false;
         this.aventurier = aventurier;
         this.player = player;
+        this.arte = arte;
     }
 
     public int getX() { return this.x; }
@@ -275,6 +295,16 @@ class Tuile {
     public void setAventurier() { this.aventurier = true; }
 
     public void supprimeAventurier() { this.aventurier = false; }
+
+    public void supprimeArtefact() { this.arte = true; }
+
+    public boolean isArtefact() {
+        return this.arte;
+    }
+
+    public void setArtefact() {
+        this.arte = true;
+    }
 
     // Permet de savoir si une tuile est valide
     public boolean isValide() {
@@ -328,8 +358,8 @@ class Aventurier {
         return this.artefact;
     }
 
-    public void setArtefact(boolean artefact) {
-        this.artefact = artefact;
+    public void recupereArtefact() {
+        this.artefact = true;
     }
 
 }

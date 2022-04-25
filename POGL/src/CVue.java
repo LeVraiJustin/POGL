@@ -147,6 +147,8 @@ class VueGrille extends JPanel implements Observer {
             g.setColor(Color.CYAN);
         } else if (t.isHeliport()) {
             g.setColor(Color.DARK_GRAY);
+        } else if (t.isArtefact()) {
+            g.setColor(Color.YELLOW);
         } else {
             g.setColor(Color.WHITE);
         }
@@ -230,6 +232,8 @@ class VueCommandes extends JPanel {
         JButton assecheD = new JButton("Assèche à droite");
         JButton assecheG = new JButton("Assèche à gauche");
 
+        JButton recupA = new JButton("Récupère artefact");
+
         monte.addActionListener(e -> { modele.aventurierMonte(); });
         droite.addActionListener(e -> { modele.aventurierDroite(); });
         gauche.addActionListener(e -> { modele.aventurierGauche(); });
@@ -242,6 +246,8 @@ class VueCommandes extends JPanel {
         assecheD.addActionListener(e -> { modele.assecheTuileD(); });
         assecheG.addActionListener(e -> { modele.assecheTuileG(); });
 
+        recupA.addActionListener(e -> { modele.recupereArtefact(); });
+
         this.add(droite);
         this.add(gauche);
         this.add(descend);
@@ -251,6 +257,7 @@ class VueCommandes extends JPanel {
         this.add(assecheB);
         this.add(assecheD);
         this.add(assecheG);
+        this.add(recupA);
     }
 }
 /** Fin de la vue. */
